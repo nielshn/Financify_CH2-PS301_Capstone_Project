@@ -1,3 +1,4 @@
+import 'package:financify_wallet/shared/theme.dart';
 import 'package:financify_wallet/ui/pages/splash_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -11,16 +12,24 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const GetMaterialApp(
+    return GetMaterialApp(
       title: 'Financify',
       debugShowCheckedModeBanner: false,
-      home: SplashPage(),
-      // routes: {
-      //   '/': (context) => const SplashPage(),
-      //   '/onboarding': (context) => const OnboardingPage(),
-      //   '/sign-in': (context) => const SignInPage(),
-      //   '/sign-up': (context) => const SignUpPage(),
-      // },
+      theme: ThemeData(
+          scaffoldBackgroundColor: lightBackgroundColor,
+          appBarTheme: AppBarTheme(
+            backgroundColor: lightBackgroundColor,
+            elevation: 0,
+            centerTitle: true,
+            iconTheme: IconThemeData(
+              color: blackColor,
+            ),
+            titleTextStyle: blackTextStyle.copyWith(
+              fontSize: 20,
+              fontWeight: semiBold,
+            ),
+          )),
+      home: const SplashPage(),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:financify_wallet/shared/theme.dart';
+import 'package:financify_wallet/ui/pages/home_page.dart';
 import 'package:financify_wallet/ui/pages/sign_up_page.dart';
 import 'package:financify_wallet/ui/widgets/buttons.dart';
 import 'package:financify_wallet/ui/widgets/forms.dart';
@@ -16,7 +17,6 @@ class _SignInPageState extends State<SignInPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: lightBackgroundColor,
       body: ListView(
         padding: const EdgeInsets.symmetric(
           horizontal: 24,
@@ -79,7 +79,9 @@ class _SignInPageState extends State<SignInPage> {
                 ),
                 CustomFilledButton(
                   title: 'Sign In',
-                  onPressed: () {},
+                  onPressed: () {
+                    Get.offAll(() => const HomePage());
+                  },
                 )
               ],
             ),
@@ -90,7 +92,7 @@ class _SignInPageState extends State<SignInPage> {
           CustomTextButton(
             title: 'Create New Account',
             onPressed: () {
-              Get.to(const SignUpPage());
+              Get.to(() => const SignUpPage());
             },
           )
         ],

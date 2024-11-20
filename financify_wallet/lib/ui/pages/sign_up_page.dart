@@ -1,5 +1,6 @@
 import 'package:financify_wallet/shared/theme.dart';
 import 'package:financify_wallet/ui/pages/sign_in_page.dart';
+import 'package:financify_wallet/ui/pages/sign_up_set_profile.dart';
 import 'package:financify_wallet/ui/widgets/buttons.dart';
 import 'package:financify_wallet/ui/widgets/forms.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,6 @@ class SignUpPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: lightBackgroundColor,
       body: ListView(
         padding: const EdgeInsets.symmetric(
           horizontal: 24,
@@ -72,7 +72,9 @@ class SignUpPage extends StatelessWidget {
                 ),
                 CustomFilledButton(
                   title: 'Continue',
-                  onPressed: () {},
+                  onPressed: () {
+                    Get.to(() => const SignUpSetProfile());
+                  },
                 )
               ],
             ),
@@ -83,9 +85,9 @@ class SignUpPage extends StatelessWidget {
           CustomTextButton(
             title: 'Sign In',
             onPressed: () {
-              Get.off(const SignInPage());
+              Get.off(() => const SignInPage());
             },
-          )
+          ),
         ],
       ),
     );

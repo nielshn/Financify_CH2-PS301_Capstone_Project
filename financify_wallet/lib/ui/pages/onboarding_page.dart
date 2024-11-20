@@ -104,7 +104,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                             CustomFilledButton(
                               title: 'Get Started',
                               onPressed: () {
-                                Get.to(const SignUpPage());
+                                Get.off(() => const SignUpPage());
                                 // Navigator.pushNamed(context, '/sign-up');
                               },
                             ),
@@ -114,7 +114,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                             CustomTextButton(
                               title: 'Sign In',
                               onPressed: () {
-                                Get.to(const SignInPage());
+                                Get.off(() => const SignInPage());
                               },
                             )
                           ],

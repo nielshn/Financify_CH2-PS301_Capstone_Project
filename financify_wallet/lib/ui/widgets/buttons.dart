@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:financify_wallet/shared/theme.dart';
 import 'package:flutter/material.dart';
 
@@ -66,6 +68,40 @@ class CustomTextButton extends StatelessWidget {
           title,
           style: greyTextStyle.copyWith(
             fontSize: 16,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class CustomInputButton extends StatelessWidget {
+  final String title;
+  final VoidCallback? onTap;
+  const CustomInputButton({
+    super.key,
+    required this.title,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 60,
+        height: 60,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: numberBackgroundColor,
+        ),
+        child: Center(
+          child: Text(
+            title,
+            style: whiteTextStyle.copyWith(
+              fontSize: 22,
+              fontWeight: semiBold,
+            ),
           ),
         ),
       ),
