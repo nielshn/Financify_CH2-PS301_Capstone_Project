@@ -1,5 +1,7 @@
 import 'package:financify_wallet/shared/theme.dart';
 import 'package:financify_wallet/ui/pages/profile_page.dart';
+import 'package:financify_wallet/ui/pages/topup_page.dart';
+import 'package:financify_wallet/ui/pages/transfer_page.dart';
 import 'package:financify_wallet/ui/widgets/home_latest_transaction_item.dart';
 import 'package:financify_wallet/ui/widgets/home_service_item.dart';
 import 'package:financify_wallet/ui/widgets/home_tips_item.dart';
@@ -111,7 +113,7 @@ class HomePage extends StatelessWidget {
                   height: 2,
                 ),
                 Text(
-                  'shaynahan',
+                  'Shaynahan',
                   style: blackTextStyle.copyWith(
                     fontSize: 20,
                     fontWeight: semiBold,
@@ -289,12 +291,16 @@ class HomePage extends StatelessWidget {
               HomeServiceItem(
                 iconUrl: 'assets/ic_topup.png',
                 title: 'Top Up',
-                onTap: () {},
+                onTap: () {
+                  Get.to(() => const TopUpPage());
+                },
               ),
               HomeServiceItem(
                 iconUrl: 'assets/ic_send.png',
                 title: 'Send',
-                onTap: () {},
+                onTap: () {
+                  Get.to(() => const TransferPage());
+                },
               ),
               HomeServiceItem(
                 iconUrl: 'assets/ic_withdraw.png',

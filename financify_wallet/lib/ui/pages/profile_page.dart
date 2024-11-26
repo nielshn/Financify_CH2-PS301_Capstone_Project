@@ -1,5 +1,7 @@
 import 'package:financify_wallet/shared/theme.dart';
 import 'package:financify_wallet/ui/pages/pin_page.dart';
+import 'package:financify_wallet/ui/pages/profile_edit_page.dart';
+import 'package:financify_wallet/ui/pages/profile_edit_pin_page.dart';
 import 'package:financify_wallet/ui/widgets/buttons.dart';
 import 'package:financify_wallet/ui/widgets/profile_menu_item.dart';
 import 'package:flutter/material.dart';
@@ -78,14 +80,22 @@ class ProfilePage extends StatelessWidget {
                 ProfileMenuItem(
                   iconUrl: 'assets/ic_edit_profile.png',
                   title: 'Edit Profile',
-                  onTap: () {
-                    Get.to(() => const PinPage());
+                  onTap: () async {
+                    final result = await Get.to(() => const PinPage());
+                   if (result == true) {
+                     Get.to(() => const ProfileEditPage());
+                   }
                   },
                 ),
                 ProfileMenuItem(
                   iconUrl: 'assets/ic_pin.png',
                   title: 'My PIN',
-                  onTap: () {},
+                  onTap: () async {
+                    final result = await Get.to(() => const PinPage());
+                    if (result == true) {
+                       Get.to(() => const ProfileEditPinPage());
+                    }
+                  },
                 ),
                 ProfileMenuItem(
                   iconUrl: 'assets/ic_wallet.png',
