@@ -1,12 +1,21 @@
+import 'package:financify_wallet/blocs/auth/auth_bloc.dart';
+import 'package:financify_wallet/blocs/tip/tip_bloc.dart';
+import 'package:financify_wallet/blocs/transaction/transaction_bloc.dart';
+import 'package:financify_wallet/blocs/user/user_bloc.dart';
+import 'package:financify_wallet/models/transfer_form_model.dart';
+import 'package:financify_wallet/shared/shared_method.dart';
 import 'package:financify_wallet/shared/theme.dart';
+import 'package:financify_wallet/ui/pages/data_provider_page.dart';
 import 'package:financify_wallet/ui/pages/profile_page.dart';
 import 'package:financify_wallet/ui/pages/topup_page.dart';
+import 'package:financify_wallet/ui/pages/transfer_amount_page.dart';
 import 'package:financify_wallet/ui/pages/transfer_page.dart';
 import 'package:financify_wallet/ui/widgets/home_latest_transaction_item.dart';
 import 'package:financify_wallet/ui/widgets/home_service_item.dart';
 import 'package:financify_wallet/ui/widgets/home_tips_item.dart';
 import 'package:financify_wallet/ui/widgets/home_user_item.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 
 class HomePage extends StatelessWidget {
@@ -84,7 +93,7 @@ class HomePage extends StatelessWidget {
           buildProfile(),
           buildWalletCard(),
           buildLevel(),
-          buildServices(),
+          buildServices(context),
           buildLatestTransactions(),
           buildSendAgain(),
           buildFriendlyTips(),
@@ -94,187 +103,216 @@ class HomePage extends StatelessWidget {
   }
 
   Widget buildProfile() {
-    return Container(
-        margin: const EdgeInsets.only(
-          top: 40,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              children: [
-                Text(
-                  'Howdy',
-                  style: greyTextStyle.copyWith(
-                    fontSize: 16,
-                  ),
+    return BlocConsumer<AuthBloc, AuthState>(
+        listener: (context, state) => {},
+        builder: (context, state) {
+          if (state is AuthSuccess) {
+            return Container(
+                margin: const EdgeInsets.only(
+                  top: 40,
                 ),
-                const SizedBox(
-                  height: 2,
-                ),
-                Text(
-                  'Shaynahan',
-                  style: blackTextStyle.copyWith(
-                    fontSize: 20,
-                    fontWeight: semiBold,
-                  ),
-                ),
-              ],
-            ),
-            GestureDetector(
-              onTap: () {
-                Get.to(() => const ProfilePage());
-              },
-              child: Container(
-                width: 60,
-                height: 60,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
-                    image: AssetImage('assets/img_profile.png'),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                child: Align(
-                  alignment: Alignment.topRight,
-                  child: Container(
-                    width: 16,
-                    height: 16,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: whiteColor,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      children: [
+                        Text(
+                          'Howdy',
+                          style: greyTextStyle.copyWith(
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 2,
+                        ),
+                        Text(
+                          state.user.username.toString(),
+                          style: blackTextStyle.copyWith(
+                            fontSize: 20,
+                            fontWeight: semiBold,
+                          ),
+                        ),
+                      ],
                     ),
-                    child: Icon(
-                      Icons.check_circle,
-                      color: greenColor,
-                      size: 14,
-                    ),
-                  ),
-                ),
-              ),
-            )
-          ],
-        ));
+                    GestureDetector(
+                      onTap: () {
+                        Get.to(() => const ProfilePage());
+                      },
+                      child: Container(
+                        width: 60,
+                        height: 60,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            image: state.user.profilePicture == null
+                                ? AssetImage('assets/img_profile.png')
+                                : NetworkImage(state.user.profilePicture!)
+                                    as ImageProvider,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        child: state.user.verified == 1
+                            ? Align(
+                                alignment: Alignment.topRight,
+                                child: Container(
+                                  width: 16,
+                                  height: 16,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: whiteColor,
+                                  ),
+                                  child: Icon(
+                                    Icons.check_circle,
+                                    color: greenColor,
+                                    size: 14,
+                                  ),
+                                ),
+                              )
+                            : null,
+                      ),
+                    )
+                  ],
+                ));
+          }
+          return Container();
+        });
   }
 
   Widget buildWalletCard() {
-    return Container(
-      width: double.infinity,
-      height: 220,
-      margin: const EdgeInsets.only(
-        top: 30,
-      ),
-      padding: const EdgeInsets.all(30),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
-        image: const DecorationImage(
-          fit: BoxFit.cover,
-          image: AssetImage('assets/img_bg_card.png'),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Shayna Hanna',
-            style: whiteTextStyle.copyWith(
-              fontSize: 18,
-              fontWeight: medium,
-            ),
-          ),
-          const SizedBox(
-            height: 28,
-          ),
-          Text(
-            '**** **** **** 1280',
-            style: whiteTextStyle.copyWith(
-              fontSize: 18,
-              fontWeight: medium,
-              letterSpacing: 6,
-            ),
-          ),
-          const SizedBox(
-            height: 21,
-          ),
-          Text(
-            'Balance',
-            style: whiteTextStyle,
-          ),
-          Text(
-            'Rp. 12.500',
-            style: whiteTextStyle.copyWith(
-              fontSize: 24,
-              fontWeight: semiBold,
-            ),
-          )
-        ],
-      ),
-    );
+    return BlocConsumer<AuthBloc, AuthState>(
+        listener: (context, state) {},
+        builder: (context, state) {
+          if (state is AuthSuccess) {
+            return Container(
+              width: double.infinity,
+              height: 220,
+              margin: const EdgeInsets.only(
+                top: 30,
+              ),
+              padding: const EdgeInsets.all(30),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(28),
+                image: const DecorationImage(
+                  fit: BoxFit.cover,
+                  image: AssetImage('assets/img_bg_card.png'),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    state.user.username.toString(),
+                    style: whiteTextStyle.copyWith(
+                      fontSize: 18,
+                      fontWeight: medium,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 28,
+                  ),
+                  Text(
+                    '**** **** **** ${state.user.cardNumber!.substring(12, 16)}',
+                    style: whiteTextStyle.copyWith(
+                      fontSize: 18,
+                      fontWeight: medium,
+                      letterSpacing: 6,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 21,
+                  ),
+                  Text(
+                    'Balance',
+                    style: whiteTextStyle,
+                  ),
+                  Text(
+                    formatCurrency(state.user.balance ?? 0),
+                    style: whiteTextStyle.copyWith(
+                      fontSize: 24,
+                      fontWeight: semiBold,
+                    ),
+                  )
+                ],
+              ),
+            );
+          }
+          return Container();
+        });
   }
 
   Widget buildLevel() {
-    return Container(
-      margin: const EdgeInsets.only(
-        top: 20,
-      ),
-      padding: const EdgeInsets.all(22),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: whiteColor,
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Text(
-                'Level 1',
-                style: blackTextStyle.copyWith(
-                  fontWeight: medium,
-                ),
+    return BlocConsumer<AuthBloc, AuthState>(
+        listener: (context, state) {},
+        builder: (context, state) {
+          if (state is AuthSuccess) {
+            return Container(
+              margin: const EdgeInsets.only(
+                top: 20,
               ),
-              const Spacer(),
-              Text(
-                '55%',
-                style: greenTextStyle.copyWith(
-                  fontWeight: semiBold,
-                ),
+              padding: const EdgeInsets.all(22),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: whiteColor,
               ),
-              Text(
-                'of Rp 20.000',
-                style: blackTextStyle.copyWith(
-                  fontWeight: semiBold,
-                ),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        'Level 1',
+                        style: blackTextStyle.copyWith(
+                          fontWeight: medium,
+                        ),
+                      ),
+                      const Spacer(),
+                      Text(
+                        '55% ',
+                        style: greenTextStyle.copyWith(
+                          fontWeight: semiBold,
+                        ),
+                      ),
+                      Text(
+                        'of ${formatCurrency(state.user.balance ?? 0)}',
+                        style: blackTextStyle.copyWith(
+                          fontWeight: semiBold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(55),
+                    child: LinearProgressIndicator(
+                      value: 0.55,
+                      minHeight: 5,
+                      valueColor: AlwaysStoppedAnimation(greenColor),
+                      backgroundColor: lightBackgroundColor,
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(55),
-            child: LinearProgressIndicator(
-              value: 0.55,
-              minHeight: 5,
-              valueColor: AlwaysStoppedAnimation(greenColor),
-              backgroundColor: lightBackgroundColor,
-            ),
-          ),
-        ],
-      ),
-    );
+            );
+          }
+
+          return Container();
+        });
   }
 
-  Widget buildServices() {
+  Widget buildServices(BuildContext context) {
     return Container(
-        margin: const EdgeInsets.only(
-          top: 30,
-        ),
-        // padding: const EdgeInsets.all(22),
-        // decoration: BoxDecoration(
-        //   borderRadius: BorderRadius.circular(20),
-        //   color: whiteColor,
-        // ),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      margin: const EdgeInsets.only(
+        top: 30,
+      ),
+      // padding: const EdgeInsets.all(22),
+      // decoration: BoxDecoration(
+      //   borderRadius: BorderRadius.circular(20),
+      //   color: whiteColor,
+      // ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           Text(
             'Do Something',
             style: blackTextStyle.copyWith(
@@ -310,14 +348,20 @@ class HomePage extends StatelessWidget {
               HomeServiceItem(
                 iconUrl: 'assets/ic_more.png',
                 title: 'More',
-                onTap: () {},
+                onTap: () {
+                  showDialog(
+                      context: context,
+                      builder: (context) => const MoreDialog());
+                },
               ),
             ],
           ),
           const SizedBox(
             height: 10,
           ),
-        ]));
+        ],
+      ),
+    );
   }
 
   Widget buildLatestTransactions() {
@@ -342,39 +386,22 @@ class HomePage extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
               color: whiteColor,
             ),
-            child: const Column(
-              children: [
-                HomeLatestTransactionItem(
-                  iconUrl: 'assets/ic_transaction_cat1.png',
-                  title: 'Top Up',
-                  time: 'Yesterday',
-                  value: '+ 450.000',
-                ),
-                HomeLatestTransactionItem(
-                  iconUrl: 'assets/ic_transaction_cat2.png',
-                  title: 'Cashback',
-                  time: 'Sep 11',
-                  value: '+ 22.000',
-                ),
-                HomeLatestTransactionItem(
-                  iconUrl: 'assets/ic_transaction_cat3.png',
-                  title: 'Withdraw',
-                  time: 'Sep 2',
-                  value: '- 5.000',
-                ),
-                HomeLatestTransactionItem(
-                  iconUrl: 'assets/ic_transaction_cat4.png',
-                  title: 'Transfer',
-                  time: 'Aug 27',
-                  value: '- 123.500',
-                ),
-                HomeLatestTransactionItem(
-                  iconUrl: 'assets/ic_transaction_cat5.png',
-                  title: 'Electric',
-                  time: 'Feb 18',
-                  value: '- 12.300.000',
-                ),
-              ],
+            child: BlocProvider(
+              create: (contex) => TransactionBloc()..add(TransactionGet()),
+              child: BlocBuilder<TransactionBloc, TransactionState>(
+                  builder: (context, state) {
+                if (state is TransactionSuccess) {
+                  return Column(
+                    children: state.transactions
+                        .map((transaction) =>
+                            HomeLatestTransactionItem(transaction: transaction))
+                        .toList(),
+                  );
+                }
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }),
             ),
           )
         ],
@@ -398,28 +425,31 @@ class HomePage extends StatelessWidget {
           const SizedBox(
             height: 14,
           ),
-          const SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                HomeUserItem(
-                  username: 'yuanita',
-                  imageUrl: 'assets/img_friend1.png',
-                ),
-                HomeUserItem(
-                  username: 'yuanita',
-                  imageUrl: 'assets/img_friend2.png',
-                ),
-                HomeUserItem(
-                  username: 'yuanita',
-                  imageUrl: 'assets/img_friend3.png',
-                ),
-                HomeUserItem(
-                  username: 'yuanita',
-                  imageUrl: 'assets/img_friend4.png',
-                ),
-              ],
-            ),
+          BlocProvider(
+            create: (context) => UserBloc()..add(UserGetRecent()),
+            child: BlocBuilder<UserBloc, UserState>(builder: (context, state) {
+              if (state is UserSuccess) {
+                return SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: state.users.map((user) {
+                      return GestureDetector(
+                          onTap: () {
+                            Get.to(
+                              () => TransferAmountPage(
+                                data: TransferFormModel(sendTo: user.username),
+                              ),
+                            );
+                          },
+                          child: HomeUserItem(user: user));
+                    }).toList(),
+                  ),
+                );
+              }
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }),
           )
         ],
       ),
@@ -445,33 +475,109 @@ class HomePage extends StatelessWidget {
           const SizedBox(
             height: 14,
           ),
-          Wrap(
-            spacing: 17,
-            runSpacing: 18,
-            children: [
-              HomeTipsItem(
-                imageUrl: 'assets/img_tips1.png',
-                title: 'Best tips for using\na credit card',
-                url: Uri.parse('https://github.com/nielshn/'),
-              ),
-              HomeTipsItem(
-                imageUrl: 'assets/img_tips2.png',
-                title: 'Spot the good pie\nof finance model',
-                url: Uri.parse('https://github.com/nielshn/'),
-              ),
-              HomeTipsItem(
-                imageUrl: 'assets/img_tips3.png',
-                title: 'Great hack to get\nbetter advices',
-                url: Uri.parse('https://github.com/nielshn/'),
-              ),
-              HomeTipsItem(
-                imageUrl: 'assets/img_tips4.png',
-                title: 'Save more penny\nbuy this instead',
-                url: Uri.parse('https://github.com/nielshn/'),
-              ),
-            ],
+          BlocProvider(
+            create: (context) => TipBloc()..add(TipGet()),
+            child: BlocBuilder<TipBloc, TipState>(builder: (context, state) {
+              if (state is TipSuccess) {
+                return Wrap(
+                  spacing: 17,
+                  runSpacing: 18,
+                  children: state.tips.map((tip) {
+                    return GestureDetector(
+                        // onTap: () {
+                        //   Get.to(
+                        //     () => TipDetailPage(
+                        //       data: TipFormModel(tip: tip),
+                        //     ),
+                        //   );
+                        // },
+                        child: HomeTipsItem(
+                      tip: tip,
+                    ));
+                  }).toList(),
+                );
+              }
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }),
           )
         ],
+      ),
+    );
+  }
+}
+
+class MoreDialog extends StatelessWidget {
+  const MoreDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      backgroundColor: Colors.transparent,
+      insetPadding: EdgeInsets.zero,
+      alignment: Alignment.bottomCenter,
+      content: Container(
+        height: 326,
+        width: MediaQuery.of(context).size.width,
+        padding: const EdgeInsets.all(30),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(40),
+          color: lightBackgroundColor,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Do More With Us',
+              style: blackTextStyle.copyWith(
+                fontSize: 16,
+                fontWeight: semiBold,
+              ),
+            ),
+            const SizedBox(
+              height: 13,
+            ),
+            Wrap(
+              spacing: 29,
+              runSpacing: 25,
+              children: [
+                HomeServiceItem(
+                  iconUrl: 'assets/ic_product_data.png',
+                  title: 'Data',
+                  onTap: () {
+                    Get.to(() => const DataProviderPage());
+                  },
+                ),
+                HomeServiceItem(
+                  iconUrl: 'assets/ic_product_water.png',
+                  title: 'Water',
+                  onTap: () {},
+                ),
+                HomeServiceItem(
+                  iconUrl: 'assets/ic_product_stream.png',
+                  title: 'Stream',
+                  onTap: () {},
+                ),
+                HomeServiceItem(
+                  iconUrl: 'assets/ic_product_movie.png',
+                  title: 'Movie',
+                  onTap: () {},
+                ),
+                HomeServiceItem(
+                  iconUrl: 'assets/ic_product_food.png',
+                  title: 'Food',
+                  onTap: () {},
+                ),
+                HomeServiceItem(
+                  iconUrl: 'assets/ic_product_travel.png',
+                  title: 'Travel',
+                  onTap: () {},
+                ),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }

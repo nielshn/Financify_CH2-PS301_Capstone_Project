@@ -1,13 +1,13 @@
+import 'package:financify_wallet/models/user_model.dart';
 import 'package:financify_wallet/shared/theme.dart';
 import 'package:flutter/material.dart';
 
 class HomeUserItem extends StatelessWidget {
-  final String username;
-  final String imageUrl;
+  final UserModel user;
+
   const HomeUserItem({
     super.key,
-    required this.username,
-    required this.imageUrl,
+    required this.user,
   });
 
   @override
@@ -31,17 +31,24 @@ class HomeUserItem extends StatelessWidget {
               shape: BoxShape.circle,
               image: DecorationImage(
                 fit: BoxFit.cover,
-                image: AssetImage(
-                  imageUrl,
-                ),
+                image: (user.profilePicture != null &&
+                        user.profilePicture!.isNotEmpty)
+                    ? NetworkImage(user.profilePicture!)
+                    : const AssetImage('assets/img_profile.png'),
               ),
             ),
           ),
-          Text(
-            '@$username',
-            style: blackTextStyle.copyWith(
-              fontSize: 12,
-              fontWeight: medium,
+          Flexible(
+            child: Text(
+              '@${user.username}',
+              style: blackTextStyle.copyWith(
+                fontSize: 12,
+                fontWeight: medium,
+              ),
+              maxLines: 1,
+              textAlign: TextAlign.center,
+              softWrap: true,
+              overflow: TextOverflow.ellipsis,
             ),
           )
         ],

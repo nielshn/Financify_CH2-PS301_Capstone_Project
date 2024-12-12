@@ -1,15 +1,15 @@
+import 'package:financify_wallet/models/payment_method_model.dart';
 import 'package:financify_wallet/shared/theme.dart';
 import 'package:flutter/material.dart';
 
 class BankItem extends StatelessWidget {
-  final String title;
-  final String imageUrl;
+  final PaymentMethodModel paymentMethod;
+
   final bool isSelected;
 
   const BankItem({
     super.key,
-    required this.title,
-    required this.imageUrl,
+    required this.paymentMethod,
     this.isSelected = false,
   });
 
@@ -25,26 +25,19 @@ class BankItem extends StatelessWidget {
           width: 2,
           color: isSelected ? blueColor : whiteColor,
         ),
-        // boxShadow: const [
-        //   BoxShadow(
-        //     color: Colors.black12,
-        //     spreadRadius: 2,
-        //     offset: Offset(0, 4),
-        //   ),
-        // ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Image.asset(
-            imageUrl,
+          Image.network(
+            paymentMethod.thumbnail.toString(),
             height: 30,
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                title,
+                paymentMethod.name.toString(),
                 style: blackTextStyle.copyWith(
                   fontSize: 16,
                   fontWeight: medium,
@@ -54,7 +47,7 @@ class BankItem extends StatelessWidget {
                 height: 2,
               ),
               Text(
-                '50 mins ',
+                '50 mins',
                 style: greyTextStyle.copyWith(
                   fontSize: 12,
                 ),

@@ -1,6 +1,9 @@
+import 'package:financify_wallet/blocs/auth/auth_bloc.dart';
+import 'package:financify_wallet/blocs/user/user_bloc.dart';
 import 'package:financify_wallet/shared/theme.dart';
 import 'package:financify_wallet/ui/pages/splash_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 
 void main() {
@@ -12,10 +15,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      title: 'Financify',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => AuthBloc()..add(AuthGetCurrentUser()),
+        ),
+        BlocProvider(
+          create: (context) => UserBloc(),
+        )
+      ],
+      child: GetMaterialApp(
+        title: 'Financify',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
           scaffoldBackgroundColor: lightBackgroundColor,
           appBarTheme: AppBarTheme(
             backgroundColor: lightBackgroundColor,
@@ -28,8 +40,10 @@ class MyApp extends StatelessWidget {
               fontSize: 20,
               fontWeight: semiBold,
             ),
-          )),
-      home: const SplashPage(),
+          ),
+        ),
+        home: const SplashPage(),
+      ),
     );
   }
 }

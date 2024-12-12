@@ -4,8 +4,14 @@ import 'package:financify_wallet/ui/widgets/buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class TopUpSuccessPage extends StatelessWidget {
-  const TopUpSuccessPage({super.key});
+class SuccessPage extends StatelessWidget {
+  final String title;
+  final String description;
+
+  const SuccessPage(
+      {super.key,
+      required this.title,
+      this.description = 'Use the money wisely and\ngrow your finance'});
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +36,7 @@ class TopUpSuccessPage extends StatelessWidget {
               ),
               // Judul utama
               Text(
-                'Top Up\nWallet Berhasil',
+                title,
                 style: blackTextStyle.copyWith(
                   fontSize: 24,
                   fontWeight: semiBold,
@@ -40,7 +46,7 @@ class TopUpSuccessPage extends StatelessWidget {
               const SizedBox(height: 16),
               // Deskripsi
               Text(
-                'Use the money wisely and\ngrow your finance',
+                description,
                 style: greyTextStyle.copyWith(
                   fontSize: 16,
                 ),

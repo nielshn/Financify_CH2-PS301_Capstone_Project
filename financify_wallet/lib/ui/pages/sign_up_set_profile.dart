@@ -1,12 +1,38 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:financify_wallet/models/signup_form_model.dart';
+import 'package:financify_wallet/shared/shared_method.dart';
 import 'package:financify_wallet/shared/theme.dart';
 import 'package:financify_wallet/ui/pages/sign_up_set_ktp.dart';
 import 'package:financify_wallet/ui/widgets/buttons.dart';
 import 'package:financify_wallet/ui/widgets/forms.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
-class SignUpSetProfile extends StatelessWidget {
-  const SignUpSetProfile({super.key});
+class SignUpSetProfile extends StatefulWidget {
+  final SignupFormModel data;
+
+  const SignUpSetProfile({
+    super.key,
+    required this.data,
+  });
+
+  @override
+  State<SignUpSetProfile> createState() => _SignUpSetProfileState();
+}
+
+class _SignUpSetProfileState extends State<SignUpSetProfile> {
+  final pinController = TextEditingController(text: '');
+  XFile? selectedImage;
+
+  bool validate() {
+    if (pinController.text.length != 6) {
+      return false;
+    }
+    return true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +70,6 @@ class SignUpSetProfile extends StatelessWidget {
           const SizedBox(
             height: 30,
           ),
-          // Container utama untuk form dan profil
           Container(
             padding: const EdgeInsets.all(22),
             decoration: BoxDecoration(
@@ -54,26 +79,43 @@ class SignUpSetProfile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Gambar profil di tengah
-                Container(
-                  width: 120,
-                  height: 120,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: AssetImage(
-                        'assets/img_profile.png',
-                      ),
+                GestureDetector(
+                  onTap: () async {
+                    final image = await selectImage();
+                    setState(() {
+                      selectedImage = image;
+                    });
+                  },
+                  child: Container(
+                    width: 120,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: lightBackgroundColor,
+                      image: selectedImage == null
+                          ? null
+                          : DecorationImage(
+                              fit: BoxFit.cover,
+                              image: FileImage(
+                                File(selectedImage!.path),
+                              ),
+                            ),
                     ),
+                    child: selectedImage != null
+                        ? null
+                        : Center(
+                            child: Image.asset(
+                              'assets/ic_upload.png',
+                              width: 32,
+                            ),
+                          ),
                   ),
                 ),
                 const SizedBox(
                   height: 16,
                 ),
-                // Nama profil
                 Text(
-                  'Shayna Hanna',
+                  widget.data.name ?? "User",
                   style: blackTextStyle.copyWith(
                     fontSize: 18,
                     fontWeight: medium,
@@ -84,18 +126,31 @@ class SignUpSetProfile extends StatelessWidget {
                   height: 30,
                 ),
                 // Form untuk PIN
-                const CustomFormField(
+                CustomFormField(
                   title: 'Set PIN (6 digit number)',
+                  controller: pinController,
                   obscureText: true,
+                  keyboardType: TextInputType.number,
                 ),
                 const SizedBox(
                   height: 30,
                 ),
-                // Tombol lanjutkan
                 CustomFilledButton(
                   title: 'Continue',
                   onPressed: () {
-                    Get.to(() => const SignUpSetKtp());
+                    if (validate()) {
+                      final data = widget.data.copyWith(
+                          pin: pinController.text,
+                          profilePicture: selectedImage == null
+                              ? null
+                              : 'data:image/png;base64,${base64Encode(File(selectedImage!.path).readAsBytesSync())}');
+                      setState(() {
+                        pinController.clear();
+                      });
+                      Get.to(() => SignUpSetKtp(data: data));
+                    } else {
+                      showCustomSnackbar(context, 'PIN harus enam digit');
+                    }
                   },
                 ),
               ],

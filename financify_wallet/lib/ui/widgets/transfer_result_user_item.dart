@@ -1,19 +1,14 @@
+import 'package:financify_wallet/models/user_model.dart';
 import 'package:financify_wallet/shared/theme.dart';
 import 'package:flutter/material.dart';
 
 class TransferResultUserItem extends StatelessWidget {
-  final String imageUrl;
-  final String name;
-  final String username;
-  final bool isVerified;
+  final UserModel user;
   final bool isSelected;
 
   const TransferResultUserItem({
     super.key,
-    required this.imageUrl,
-    required this.name,
-    required this.username,
-    this.isVerified = false,
+    required this.user,
     this.isSelected = false,
   });
 
@@ -35,6 +30,7 @@ class TransferResultUserItem extends StatelessWidget {
         ),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
             width: 70,
@@ -42,11 +38,14 @@ class TransferResultUserItem extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               image: DecorationImage(
-                image: AssetImage(imageUrl),
+                image: (user.profilePicture != null &&
+                        user.profilePicture!.isNotEmpty)
+                    ? NetworkImage(user.profilePicture!)
+                    : const AssetImage('assets/img_profile.png'),
                 fit: BoxFit.cover,
               ),
             ),
-            child: isVerified
+            child: user.verified == 1
                 ? Align(
                     alignment: Alignment.topRight,
                     child: Container(
@@ -68,20 +67,30 @@ class TransferResultUserItem extends StatelessWidget {
           const SizedBox(
             height: 13,
           ),
-          Text(
-            name,
-            style: blackTextStyle.copyWith(
-              fontSize: 16,
-              fontWeight: medium,
+          Flexible(
+            child: Text(
+              user.name.toString(),
+              style: blackTextStyle.copyWith(
+                fontSize: 16,
+                fontWeight: medium,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
             ),
           ),
           const SizedBox(
             height: 2,
           ),
-          Text(
-            username,
-            style: greyTextStyle.copyWith(
-              fontSize: 12,
+          Flexible(
+            child: Text(
+              '@${user.username}',
+              style: greyTextStyle.copyWith(
+                fontSize: 12,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
             ),
           ),
         ],
